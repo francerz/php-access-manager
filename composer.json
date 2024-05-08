@@ -15,11 +15,11 @@
     },
     "require": {
         "fig/http-message-util": "^1.0",
-        "phpunit/phpunit": "^9.6",
         "psr/http-factory": "^1.0",
         "psr/http-server-middleware": "^1.0"
     },
     "require-dev": {
-        "francerz/http": "^0.3 || ^0.4"
+        "francerz/http": "^0.3 || ^0.4",
+        "phpunit/phpunit": "^9.6"
     }
 }
