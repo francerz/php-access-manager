@@ -1,0 +1,25 @@
+{
+    "name": "francerz/access-manager",
+    "description": "A PSR-15 based Access Manager handler.",
+    "type": "library",
+    "license": "ISC",
+    "autoload": {
+        "psr-4": {
+            "Francerz\\AccessManager\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Francerz\\AccessManager\\Dev\\": "dev/"
+        }
+    },
+    "require": {
+        "fig/http-message-util": "^1.0",
+        "phpunit/phpunit": "^9.6",
+        "psr/http-factory": "^1.0",
+        "psr/http-server-middleware": "^1.0"
+    },
+    "require-dev": {
+        "francerz/http": "^0.3 || ^0.4"
+    }
+}
