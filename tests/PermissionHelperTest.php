@@ -41,4 +41,12 @@ class PermissionHelperTest extends TestCase
         $this->assertFalse(PermissionHelper::match('read write delete', 'read create'));
         $this->assertFalse(PermissionHelper::match('read write delete', 'execute | create'));
     }
+
+    public function testMerge()
+    {
+        $this->assertEquals('read', PermissionHelper::merge('read', ''));
+        $this->assertEquals('read write', PermissionHelper::merge('read', 'write'));
+        $this->assertEquals('read write', PermissionHelper::merge('read', 'write read'));
+        $this->assertEquals('read write execute', PermissionHelper::merge('read', 'write read', 'write execute'));
+    }
 }

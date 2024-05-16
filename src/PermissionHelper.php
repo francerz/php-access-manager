@@ -59,8 +59,24 @@ abstract class PermissionHelper
         if (!is_string($permission)) {
             return '';
         }
-        $permission = preg_replace('/\s+/', ' ', trim($permission));
-        return $permission;
+        return preg_replace('/\s+/', ' ', trim($permission));
+    }
+
+    public static function join($permission): string
+    {
+        if (is_object($permission) && method_exists($permission, '__toString')) {
+            $permission = (string)$permission;
+        }
+        if (is_scalar($permission)) {
+            $permission = (string)$permission;
+        }
+        if (is_array($permission)) {
+            $permission = implode(' ', array_unique($permission));
+        }
+        if (!is_string($permission)) {
+            return '';
+        }
+        return preg_replace('/\s+/', ' ', trim($permission));
     }
 
     /**
@@ -118,36 +134,21 @@ abstract class PermissionHelper
     }
 
     /**
-     * Merge existing permissions with new permissions.
+     * Merge current permissions with new permissions.
      *
-     * This function takes existing permissions and new permissions, converts
+     * This function takes current permissions and new permissions, converts
      * them to arrays, merges them together, and returns the unique merged array
      * of permissions.
      *
-     * @param string|array|object $existing Existing permissions to merge.
-     * @param string|array|object $new New permissions to merge.
-     * @return string[] The merged array of permissions.
-     */
-    public static function merge($existing, $new)
-    {
-        $existing = static::toArray($existing);
-        $new = static::toArray($new);
-
-        return array_unique(array_merge($existing, $new));
-    }
-
-    /**
-     * Merge existing permissions with new permissions and return as string.
-     *
-     * This function merges existing permissions with new permissions, converts
-     * them to a string and returns the merged string from permissions.
-     *
-     * @param string|array|object $existing Existring permissions to merge.
+     * @param string|array|object $current Current permissions to merge.
      * @param string|array|object $new New permissions to merge.
      * @return string The merged string of permissions.
      */
-    public static function mergeString($existing, $new)
+    public static function merge($current, ...$new)
     {
-        return static::toString(static::merge($existing, $new));
+        $current = static::splitPermission($current);
+        $new = array_map([static::class, 'splitPermission'], $new);
+
+        return static::join(array_unique(array_merge($current, ...$new)));
     }
 }
