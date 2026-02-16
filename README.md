@@ -33,26 +33,32 @@ composer require francerz/access-manager
 
 2. Configure the access middleware in your Slim\App routing:
 
-   ```php
-   use Francerz\AccessManager\AccessMiddleware;
-   use Slim\Routing\RouteCollectorProxy;
-   
-   $app = new \Slim\App();
-   
-   // A PSR-17 ResponseFactory implemenation
-   $responseFactory = new \GuzzleHttp\Psr7\HttpFactory();
-   
-   $userPermissionProvider = new CurrentUserGrantsProvider();
-   $accessMiddleware = new AccessMiddleware($userPermissionProvider, $responseFactory);
-   
-   $app->get('[/]', [HomeController::class, 'indexGet'])
-       ->addMiddleware($accessMiddleware->allow('user'));
-   
-   $app->group('/admin', function(RouteCollectorProxy $route) {
-       // Restricted admin routes.
-       $route->get('[/]', [AdminController::class, 'indexGet']);
-   })->addMiddleware($accessMiddleware->allow('admin'));
-   ```
+    ```php
+    use Francerz\AccessManager\AccessMiddleware;
+    use Slim\Routing\RouteCollectorProxy;
+    
+    $app = new \Slim\App();
+    
+    // A PSR-17 ResponseFactory implemenation
+    $responseFactory = new \GuzzleHttp\Psr7\HttpFactory();
+    
+    $userPermissionProvider = new CurrentUserGrantsProvider();
+    $accessMiddleware = new AccessMiddleware($userPermissionProvider, $responseFactory);
+    
+    $app->get('[/]', [HomeController::class, 'indexGet'])
+        ->addMiddleware($accessMiddleware->allow('user'));
+    
+    $app->group('/admin', function(RouteCollectorProxy $route) {
+        // Restricted admin routes.
+        $route->get('[/]', [AdminController::class, 'indexGet']);
+    })->addMiddleware($accessMiddleware->allow('admin'));
+
+    $app->get('/admin-or-user', [HomeController::class, 'indexGet'])
+        ->addMiddleware($accesMiddleware->allow('admin', 'user'));
+
+    $app->get('/admin-and-user', [HomeController::class, 'indexGet'])
+        ->addMiddleware($access->allow(['admin', 'user']));
+    ```
 
 ## Permission Syntax
 

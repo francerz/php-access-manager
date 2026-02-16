@@ -34,14 +34,23 @@ class AccessMiddleware implements MiddlewareInterface
         $this->rejectHandler = new DefaultRejectHandler($responseFactoryInterface);
     }
 
+    public function __toString()
+    {
+        return $this->getAllowedPermissions();
+    }
+
     /**
      * Specify the permissions allowed by this middleware.
      *
-     * @param string $permissions The allowed permissions.
+     * @param string|string[] $permissions The allowed permissions.
      * @return self A clone of this middleware with the specified permissions.
      */
-    public function allow(string $permissions)
+    public function allow(...$permissions)
     {
+        foreach ($permissions as &$p) {
+            $p = PermissionHelper::join($p);
+        }
+        $permissions = PermissionHelper::toString($permissions);
         $clone = clone $this;
         $clone->allowedPermissions = $permissions;
         return $clone;
@@ -56,6 +65,11 @@ class AccessMiddleware implements MiddlewareInterface
         $clone = clone $this;
         $clone->rejectHandler = $rejectHandler;
         return $clone;
+    }
+
+    public function getAllowedPermissions(): string
+    {
+        return $this->allowedPermissions;
     }
 
     /**

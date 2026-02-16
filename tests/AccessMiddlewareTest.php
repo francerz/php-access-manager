@@ -46,4 +46,20 @@ class AccessMiddlewareTest extends TestCase
         $response = $accessMiddleware->process($serverRequest, $handler);
         $this->assertEquals(StatusCodeInterface::STATUS_FORBIDDEN, $response->getStatusCode());
     }
+
+    public function testAllow()
+    {
+        $httpFactory = new HttpFactory();
+        $permissionProvider = new UserPermissionProvider('read write delete');
+        $accessMiddleware = new AccessMiddleware($permissionProvider, $httpFactory);
+
+        $this->assertEquals('read', (string)$accessMiddleware->allow('read'));
+        $this->assertEquals('read write', (string)$accessMiddleware->allow(['read', 'write']));
+        $this->assertEquals('read | write', (string)$accessMiddleware->allow('read', 'write'));
+        $this->assertEquals('read | write execute', (string)$accessMiddleware->allow('read', ['write', 'execute']));
+        $this->assertEquals('read write | execute', (string)$accessMiddleware->allow(['read', 'write'], 'execute'));
+        $this->assertEquals('read write | execute', (string)$accessMiddleware->allow('read write | execute'));
+        $this->assertEquals('read write | write execute', (string)$accessMiddleware->allow('read write', ['write', 'execute']));
+
+    }
 }
